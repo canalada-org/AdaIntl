@@ -1,3 +1,26 @@
+--------------------------------------------------------------------------------------
+-- AdaIntl: Internationalization library for Ada95 made in Ada95
+-- Copyright (C) 2006  Andres_age
+--
+-- AdaIntl is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU Lesser General Public
+-- License as published by the Free Software Foundation; either
+-- version 2.1 of the License, or any later version.
+--
+-- This library is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- Lesser General Public License for more details.
+--
+-- You should have received a copy of the GNU Lesser General Public
+-- License along with this library; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-- or look here: http://www.gnu.org/licenses/lgpl.html
+--
+-- You can contact the author at this e-mail: andres.age*AT*gmail*DOT*com
+--------------------------------------------------------------------------------------
+
+
 with Ada.Text_Io, Ada.Characters.Handling,Adaintl_Version;
 use Ada.Text_Io, Ada.Characters.Handling,Adaintl_Version;
 
@@ -22,27 +45,27 @@ package body D_Frases_Io is
       -- Si existe, añadimos la frase al final
 
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Preparando escritura de '" & Frase &
-            "' en el fichero de traduccion " & Ruta_Fichero(Dominio,
+         Put_Line("Preparing writing of '" & Frase &
+            "' to translation file " & Ruta_Fichero(Dominio,
                Idioma));
       end if;
 
       if not Existe_Fichero (Dominio,Idioma,Debug) then
 
          if Debug=Total_No_Stop or Debug=Total_Stop then
-            Put_Line("Creando fichero de traduccion " & Ruta_Fichero(
+            Put_Line("Creating translation file " & Ruta_Fichero(
                   Dominio, Idioma));
          end if;
          begin
             Create (F,Out_File,Ruta_Fichero(Dominio, Idioma));
          exception
             when Name_Error=>
-                  if Debug/=Deactivated and Debug/=No_Debug then
+               if Debug/=Deactivated and Debug/=No_Debug then
                   New_Line;
-                  Put_Line("Error, no se puede crear el fichero " &
+                  Put_Line("Error, can not create " &
                      Ruta_Fichero(Dominio, Idioma));
                   Put_Line(
-                     "Asegurese de que existe el directorio elegido.");
+                     "Make sure chosen directory exists.");
                end if;
                raise Fichero_Incorrecto;
          end;
@@ -61,7 +84,7 @@ package body D_Frases_Io is
          New_Line(F,2);
       else
          if Debug=Total_No_Stop or Debug=Total_Stop then
-            Put_Line("Abriendo fichero de traduccion " & Ruta_Fichero(
+            Put_Line("Opening translation file " & Ruta_Fichero(
                   Dominio, Idioma));
          end if;
          Open (F,Append_File,Ruta_Fichero(Dominio, Idioma));
@@ -69,7 +92,7 @@ package body D_Frases_Io is
 
       -- Añadimos la frase
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Escribiendo cadena.");
+         Put_Line("Writing string.");
       end if;
       Put(F, "# " & '"' & Formatear_Texto_Para_Escribir(Frase) & '"');
       New_Line(F);
@@ -77,7 +100,7 @@ package body D_Frases_Io is
          Formatear_Texto_Para_Escribir(Frase) & '"');
       New_Line(F,2);
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Cadena escrita correctamente. Cerrando fichero.");
+         Put_Line("String written correctly. Closing file.");
       end if;
       Close(F);
    end Escribir_Frase;
@@ -164,11 +187,11 @@ package body D_Frases_Io is
       procedure L_Hash is 
       begin
          if not Is_Digit(C) then
-            if Debug       /=Deactivated and Debug       /=No_Debug then
+            if Debug/=Deactivated and Debug/=No_Debug then
                New_Line;
-               Put_Line("Error, fichero de configuracion " &  Ruta_Fichero(
-                     Dominio, Idioma) & " incorrecto. ");
-               Put_Line("Se esperaba un digito.");
+               Put_Line("Error, translation file " &  Ruta_Fichero(
+                     Dominio, Idioma) & " not correct. ");
+               Put_Line("Digit expected.");
             end if;
             Close(F);
             raise Fichero_Incorrecto;
@@ -176,11 +199,11 @@ package body D_Frases_Io is
          while Is_Digit(C) loop
             Temp_Hash:=(10*Temp_Hash) + T_Hash(Valor(C));
             if End_Of_Line(F) or End_Of_File(F) then
-               if Debug       /=Deactivated and Debug       /=No_Debug then
+               if Debug/=Deactivated and Debug/=No_Debug then
                   New_Line;
-                  Put_Line("Error, fichero de configuracion " &
-                     Ruta_Fichero(Dominio, Idioma) & " incorrecto. ");
-                  Put_Line("Se esperaba  '='.");
+                  Put_Line("Error, translation file " &
+                     Ruta_Fichero(Dominio, Idioma) & " not correct. ");
+                  Put_Line("'=' expected.");
                end if;
                Close(F);
                raise Fichero_Incorrecto;
@@ -202,9 +225,9 @@ package body D_Frases_Io is
             if C/='=' then
                if  Debug/=Deactivated and Debug/=No_Debug then
                   New_Line;
-                  Put_Line("Error, fichero de configuracion " &
-                     Ruta_Fichero(Dominio, Idioma) & " incorrecto. ");
-                  Put_Line("Se esperaba  '='.");
+                  Put_Line("Error, translation file " &
+                     Ruta_Fichero(Dominio, Idioma) & " not correct. ");
+                  Put_Line("'=' expected.");
                end if;
                Close(F);
                raise Fichero_Incorrecto;
@@ -213,11 +236,11 @@ package body D_Frases_Io is
             if C/='"' then -- " inicial
                if Debug/=Deactivated and Debug/=No_Debug then
                   New_Line;
-                  Put_Line("Error, fichero de configuracion " &
-                     Ruta_Fichero(Dominio, Idioma) & " incorrecto. ");
+                  Put_Line("Error, translation file " &
+                     Ruta_Fichero(Dominio, Idioma) & " not correct. ");
                   Put_Line(
-                     "Se esperaban comillas para empezar la frase (" & '"' &
-                     ").");
+                     "Doublequotes (" & '"' &
+                     ") expected to start phrase.");
                end if;
                Close(F);
                raise Fichero_Incorrecto;
@@ -229,11 +252,11 @@ package body D_Frases_Io is
                if End_Of_Line(F) or End_Of_File(F) then
                   if Debug/=Deactivated and Debug/=No_Debug then
                      New_Line;
-                     Put_Line("Error, fichero de configuracion " &
-                        Ruta_Fichero(Dominio, Idioma) & " incorrecto. ");
+                     Put_Line("Error, translation file " &
+                        Ruta_Fichero(Dominio, Idioma) & " not correct. ");
                      Put_Line(
-                        "Se esperaban comillas para cerrar la frase (" & '"' &
-                        ").");
+                        "Doublequotes (" & '"' &
+                        ") expected to finish phrase.");
                   end if;
                   Close(F);
                   raise Fichero_Incorrecto;
@@ -243,11 +266,11 @@ package body D_Frases_Io is
                   if End_Of_Line(F) or End_Of_File(F) then
                      if Debug/=Deactivated and Debug/=No_Debug then
                         New_Line;
-                        Put_Line("Error, fichero de configuracion " &
-                           Ruta_Fichero(Dominio, Idioma) & " incorrecto. ");
+                        Put_Line("Error, translation file " & Ruta_Fichero(Dominio, Idioma)
+                           & " not correct. ");
                         Put_Line(
-                           "Se esperaban comillas para cerrar la frase (" & '"' &
-                           ").");
+                           "Doublequotes (" & '"' &
+                           ") expected to finish phrase.");
                      end if;
                      Close(F);
                      raise Fichero_Incorrecto;
@@ -270,9 +293,9 @@ package body D_Frases_Io is
                when Hash_Existente=>
                   if Debug/=Deactivated and Debug/=No_Debug then
                      New_Line;
-                     Put_Line("Error, fichero de configuracion " &
-                        Ruta_Fichero(Dominio, Idioma) & " incorrecto. ");
-                     Put_Line("Existen cadenas con el mismo hash" & T_Hash'
+                        Put_Line("Error, translation file " & Ruta_Fichero(Dominio, Idioma)
+                           & " not correct. ");
+                     Put_Line("There are strings with same hash " & T_Hash'
                         Image(Temp_Hash));
                   end if;
                   Close(F);
@@ -280,8 +303,8 @@ package body D_Frases_Io is
 
             end;
             if Debug=Total_No_Stop or Debug=Total_Stop then
-               Put_Line("Frase con hash " & T_Hash'Image(Temp_Hash) &
-                  " leida y cargada correctamente.");
+               Put_Line("String with hash " & T_Hash'Image(Temp_Hash) &
+                  " correctly loaded.");
 
             end if;
             Temp_Hash:=0;
@@ -316,7 +339,7 @@ package body D_Frases_Io is
       Salir : exception;  
    begin
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Abriendo fichero de traduccion " & Ruta_Fichero(
+         Put_Line("Opening translation file " & Ruta_Fichero(
                Dominio, Idioma));
       end if;
       begin
@@ -324,8 +347,8 @@ package body D_Frases_Io is
       exception
          when Name_Error=>
             if Debug=Total_No_Stop or Debug=Total_Stop then
-               Put_Line("No se cargaran frases dado que no existe " &
-                  Ruta_Fichero(Dominio, Idioma));
+               Put_Line("No string will be loaded; file " &
+                  Ruta_Fichero(Dominio, Idioma) & " doesnt exist.");
             end if;
             raise Salir;
 
@@ -333,7 +356,7 @@ package body D_Frases_Io is
       Leer_Proximo_Caracter;
       Doc;
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Carga de frases completada. Cerrando fichero.");
+         Put_Line("Strings loaded. Closing file.");
       end if;
       Close(F);
    exception
@@ -368,11 +391,11 @@ package body D_Frases_Io is
    begin
       Var_Usar_Directorio:=To_Unbounded_String(S);
       if D=Total_No_Stop or D=Total_Stop then
-         Put("Tipo de organizacion: ");
+         Put("Organization: ");
          if S/="" then
-            Put_Line("por directorios");
+            Put_Line("by directories.");
          else
-            Put_Line("por extension");
+            Put_Line("by extension.");
          end if;
       end if;
    end Usar_Directorio;
@@ -391,7 +414,7 @@ package body D_Frases_Io is
 
 
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Comprobando fichero " & Ruta_Fichero(Dominio, Idioma));
+         Put_Line("Checking file " & Ruta_Fichero(Dominio, Idioma));
       end if;
       begin
          Open (F,In_File,Ruta_Fichero(Dominio, Idioma));
@@ -399,7 +422,7 @@ package body D_Frases_Io is
       exception
          when Name_Error=> -- No existe!
             if Debug=Total_No_Stop or Debug=Total_Stop then
-               Put_Line("No existe el fichero " & Ruta_Fichero(Dominio,
+               Put_Line("There is no file " & Ruta_Fichero(Dominio,
                      Idioma));
             end if;
             return False;

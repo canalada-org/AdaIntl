@@ -1,3 +1,26 @@
+--------------------------------------------------------------------------------------
+-- AdaIntl: Internationalization library for Ada95 made in Ada95
+-- Copyright (C) 2006  Andres_age
+--
+-- AdaIntl is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU Lesser General Public
+-- License as published by the Free Software Foundation; either
+-- version 2.1 of the License, or any later version.
+--
+-- This library is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- Lesser General Public License for more details.
+--
+-- You should have received a copy of the GNU Lesser General Public
+-- License along with this library; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-- or look here: http://www.gnu.org/licenses/lgpl.html
+--
+-- You can contact the author at this e-mail: andres.age*AT*gmail*DOT*com
+--------------------------------------------------------------------------------------
+
+
 with Ada.Text_Io, Ada.Characters.Handling;
 use Ada.Text_Io, Ada.Characters.Handling;
 
@@ -88,9 +111,9 @@ package body D_Archivo_Conf is
             if Nombre_Variable/=To_Unbounded_String("LANGUAGE") and Nombre_Variable/=To_Unbounded_String("LANGUAGE_NAME")then
                if  Debug/=Deactivated and Debug/=No_Debug then
                   New_Line;
-                  Put_Line("Error, fichero de configuracion '" &
-                     Ruta & "' incorrecto. ");
-                  Put_Line("Se esperaba  'Language' o 'Language_Name'");
+                  Put_Line("Error, configuration file '" &
+                     Ruta & "' not correct. ");
+                  Put_Line("'Language' or 'Language_Name' expected.");
                end if;
                Close(F);
                raise Fichero_Configuracion_Incorrecto;
@@ -100,9 +123,9 @@ package body D_Archivo_Conf is
             if C/='=' then
                if  Debug/=Deactivated and Debug/=No_Debug then
                   New_Line;
-                  Put_Line("Error, fichero de configuracion '" &
-                     Ruta & "' incorrecto. ");
-                  Put_Line("Se esperaba  '='.");
+                  Put_Line("Error, configuration file '" &
+                     Ruta & "' not correct. ");
+                  Put_Line("'=' expected.");
                end if;
                Close(F);
                raise Fichero_Configuracion_Incorrecto;
@@ -111,11 +134,9 @@ package body D_Archivo_Conf is
             if C/='"' then -- " inicial
                if Debug/=Deactivated and Debug/=No_Debug then
                   New_Line;
-                  Put_Line("Error, fichero de configuracion '" &
-                     Ruta & "' incorrecto. ");
-                  Put_Line(
-                     "Se esperaban comillas (" & '"' &
-                     ").");
+                  Put_Line("Error, configuration file '" &
+                     Ruta & "' not correct. ");
+                  Put_Line("Doublequotes (" & '"' & ") expected.");
                end if;
                Close(F);
                raise Fichero_Configuracion_Incorrecto;
@@ -127,11 +148,9 @@ package body D_Archivo_Conf is
                if End_Of_Line(F) or End_Of_File(F) then
                   if Debug/=Deactivated and Debug/=No_Debug then
                      New_Line;
-                     Put_Line("Error, fichero de configuracion " &
-                        Ruta & " incorrecto. ");
-                     Put_Line(
-                        "Se esperaban comillas (" & '"' &
-                        ").");
+                  Put_Line("Error, configuration file '" &
+                     Ruta & "' not correct. ");
+                  Put_Line("Doublequotes (" & '"' & ") expected.");
                   end if;
                   Close(F);
                   raise Fichero_Configuracion_Incorrecto;
@@ -166,10 +185,10 @@ package body D_Archivo_Conf is
                   if Iterador=T_Language'Last then  -- NULL, idioma NO VALIDO
                      if Debug/=Deactivated and Debug/=No_Debug then
                         New_Line;
-                        Put_Line("Error, fichero de configuracion " &
-                           Ruta & " incorrecto. ");
+                  Put_Line("Error, configuration file '" &
+                     Ruta & "' not correct. ");
                         Put_Line(
-                           "Idioma '" & To_String(Valor_Variable)  & "' no valido.");
+                           "Language'" & To_String(Valor_Variable)  & "' not valid.");
                      end if;
                      raise Fichero_Configuracion_Incorrecto;
 
@@ -216,14 +235,14 @@ package body D_Archivo_Conf is
       Salir : exception;  
    begin
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Abriendo fichero de configuracion " & Ruta);
+         Put_Line("Opening configuration file." & Ruta);
       end if;
       begin
          Open(F,In_File,Ruta);
       exception
          when Name_Error=>
             if Debug=Total_No_Stop or Debug=Total_Stop then
-               Put_Line("No se cargara la configuracion dado que no existe " & Ruta);
+               Put_Line("No configuration will be loaded. File '" & Ruta & "' doesnt exist.");
             end if;
             raise Salir;
 
@@ -231,7 +250,7 @@ package body D_Archivo_Conf is
       Leer_Proximo_Caracter;
       Conf_File;
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Configuracion leida correctamente. Cerrando fichero.");
+         Put_Line("Configuration read. Closing file.");
       end if;
       Close(F);
    exception
@@ -260,7 +279,7 @@ package body D_Archivo_Conf is
       -- Si existe, añadimos la frase al final
 
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Preparando escritura de fichero de configuracion");
+         Put_Line("Preparing configuration file writing.");
       end if;
 
 
@@ -270,8 +289,8 @@ package body D_Archivo_Conf is
          when Name_Error=>
             if Debug/=Deactivated and Debug/=No_Debug then
                New_Line;
-               Put_Line("Error, no se puede crear el fichero " &
-                  Ruta);
+               Put_Line("Error, file " &
+                  Ruta & "couldnt be created.");
             end if;
             raise Fichero_Configuracion_Incorrecto;
       end;
@@ -297,7 +316,7 @@ package body D_Archivo_Conf is
 
       if Debug=Total_No_Stop or Debug=Total_Stop then
          Put_Line(
-            "Fichero de configuracion creado correctamente. Cerrando fichero.");
+            "Configuration file created successfully. Closing file.");
       end if;
       Close(F);
    end Escribir_Configuración;
@@ -315,7 +334,7 @@ package body D_Archivo_Conf is
       F : File_Type;  
    begin
       if Debug=Total_No_Stop or Debug=Total_Stop then
-         Put_Line("Comprobando fichero de configuracion " & Ruta);
+         Put_Line("Checking configuration file " & Ruta);
       end if;
       begin
          Open (F,In_File,Ruta);
@@ -323,7 +342,7 @@ package body D_Archivo_Conf is
       exception
          when Name_Error=> -- No existe!
             if Debug=Total_No_Stop or Debug=Total_Stop then
-               Put_Line("No existe el fichero de configuracion " & Ruta);
+               Put_Line("Configuration file " & Ruta & " doesnt exist.");
             end if;
             return False;
       end;

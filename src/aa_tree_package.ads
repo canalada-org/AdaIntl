@@ -1,3 +1,7 @@
+-- This library was made by Mark Allen Weiss
+-- http://www.cs.fiu.edu/~weiss/ada.html
+-- Used and modified with permission of author to use in AdaIntl
+
 -- Generic Package Specification for AA_Tree_Package
 --
 -- Requires:

@@ -1,7 +1,30 @@
+--------------------------------------------------------------------------------------
+-- AdaIntl: Internationalization library for Ada95 made in Ada95
+-- Copyright (C) 2006  Andres_age
+--
+-- AdaIntl is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU Lesser General Public
+-- License as published by the Free Software Foundation; either
+-- version 2.1 of the License, or any later version.
+--
+-- This library is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-- Lesser General Public License for more details.
+--
+-- You should have received a copy of the GNU Lesser General Public
+-- License along with this library; if not, write to the Free Software
+-- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+-- or look here: http://www.gnu.org/licenses/lgpl.html
+--
+-- You can contact the author at this e-mail: andres.age*AT*gmail*DOT*com
+--------------------------------------------------------------------------------------
+
+
 with D_Frases_Io,D_Hash, D_Arbol_Frases,Ada.Strings.Unbounded,
-   D_Arbol_Dominios, D_Archivo_Conf;
+   D_Arbol_Dominios, D_Archivo_Conf, adaintl_version;
 use D_Frases_Io,D_Hash, D_Arbol_Frases,Ada.Strings.Unbounded,
-   D_Arbol_Dominios, D_Archivo_Conf;
+   D_Arbol_Dominios, D_Archivo_Conf, adaintl_version;
 
 with Ada.Text_Io;
 use Ada.Text_Io;
@@ -57,7 +80,7 @@ package body Adaintl is
          if  Debug_Mode=No_Debug then
             raise No_Execution;
          else
-            Put_Line("Error: Lenguaje no valido (nul).");
+            Put_Line("Error: Language not valid (nul).");
             if  Debug_Mode=Only_Errors_Stop or  Debug_Mode=Total_Stop then
                raise Language_Not_Valid;
             else -- No stop
@@ -70,10 +93,10 @@ package body Adaintl is
 
       -- Información de Debug
       if Debug_Mode=Total_No_Stop or Debug_Mode=Total_Stop then
-         Put_Line("Iniciando AdaIntl");
-         Put_Line("Modo de debug: " & Debug_Level_Type'Image(Debug_Mode));
-         Put_Line("Idioma: " & Language_Type'Image(Language));
-         Put_Line("Dominio por defecto: " & Default_Domain);
+         Put_Line("Initializing " & Name_Of_Adaintl);
+         Put_Line("Debug mode: " & Debug_Level_Type'Image(Debug_Mode));
+         Put_Line("Language: " & Language_Type'Image(Language));
+         Put_Line("Default Domain: " & Default_Domain);
          Put_Line("---------------------------------------------");
       end if;
 
@@ -85,7 +108,7 @@ package body Adaintl is
       -- Cargamos idioma de archivo si procede
       if Load_Configuration_File/="" then
          declare
-            Datos_Configuracion : T_Datos_Configuracion := (D_Idiomas.Nul, To_Unbounded_String (""));  
+            Datos_Configuracion : T_Datos_Configuracion := (D_Idiomas.Nul, null_unbounded_string);  
          begin
             if not Existe_Fichero_Configuración(Load_Configuration_File,
                   T_Debug_Level(Debug_Mode)) then
@@ -130,8 +153,8 @@ package body Adaintl is
       Dominio_Temp:=Nuevo_Dominio(Default_Domain,T_Language(Language));
 
       if Debug_Mode=Total_No_Stop or Debug_Mode=Total_Stop then
-         Put_Line("Cargando frases de dominio '" & Default_Domain &
-            "' en " & Language_Type'Image(Language));
+         Put_Line("Loading strings from domain '" & Default_Domain &
+            "' in " & Language_Type'Image(Language));
 
       end if;
       -- Cargamos las frases y las insertamos en el arbol de dominios
@@ -190,7 +213,7 @@ package body Adaintl is
    begin
 
       if Debug_Mode=Total_No_Stop or Debug_Mode=Total_Stop then
-         Put_Line("Modo de debug: " & Debug_Level_Type'Image(Debug_Mode));
+         Put_Line("Debug mode: " & Debug_Level_Type'Image(Debug_Mode));
       end if;
       Var_Debug_Level:=Debug_Mode;
 
@@ -266,7 +289,7 @@ package body Adaintl is
          if Var_Debug_Level=No_Debug then
             raise No_Execution;
          else
-            Put_Line("Error: Lenguaje no valido (nul).");
+            Put_Line("Error: Language not valid (nul).");
             if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
                   Total_Stop then
                raise Language_Not_Valid;
@@ -317,7 +340,7 @@ package body Adaintl is
          Insertar_En_Arbol : Boolean := True;  
       begin
          if Var_Debug_Level=Total_No_Stop or Var_Debug_Level=Total_Stop then
-            Put_Line("Frase no encontrada en fichero de traduccion.");
+            Put_Line("String not found on translation file.");
          end if;
          begin
             Escribir_Frase(Right,H, Left, T_Language(Var_Language),
@@ -378,7 +401,7 @@ package body Adaintl is
          if Var_Debug_Level=No_Debug then
             raise No_Execution;
          else
-            Put_Line("Error: No se ha inicializado AdaIntl.");
+            Put_Line("Error: AdaIntl is not initialized.");
             if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
                   Total_Stop then
                raise Not_Initialized;
@@ -394,7 +417,7 @@ package body Adaintl is
          if Var_Debug_Level=No_Debug then
             raise No_Execution;
          else
-            Put_Line("Error: Lenguaje no valido (nul).");
+            Put_Line("Error: Language not valid (nul).");
             if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
                   Total_Stop then
                raise Language_Not_Valid;
@@ -411,7 +434,7 @@ package body Adaintl is
 
       -- Comprobamos que el dominio está cargado
       if Var_Debug_Level=Total_No_Stop or Var_Debug_Level=Total_Stop then
-         Put_Line("Comprobando que este cargado el dominio '" & Left & "'");
+         Put_Line("Checking that domain '" & Left & "' is loaded.");
       end if;
 
 
@@ -431,7 +454,7 @@ package body Adaintl is
       -- Comprobamos que el dominio cargado sea correcto y el idioma coincida
       if Idioma(D)/=T_Language(Var_Language) then
          if Var_Debug_Level=Total_No_Stop or Var_Debug_Level=Total_Stop then
-            Put_Line("Encontrado en memoria dominio '" & Left & "' en " &
+            Put_Line("Found loaded domain '" & Left & "' in " &
                T_Language'Image(Idioma(D)));
          end if;
          -- Si no coincide debemos quitar de memoria el dominio y cargar el correcto
@@ -470,7 +493,7 @@ package body Adaintl is
             )
          );
       if Var_Debug_Level=Total_No_Stop or Var_Debug_Level=Total_Stop then
-         Put_Line("Frase en fichero de traduccion.");
+         Put_Line("String on translation file.");
       end if;
 
       return Frase(F_Temp);
@@ -495,7 +518,7 @@ package body Adaintl is
    procedure Clean_Adaintl is 
    begin
       if Var_Debug_Level=Total_No_Stop or Var_Debug_Level=Total_Stop then
-         Put_Line("Borrando datos y vaciando arbol de dominios");
+         Put_Line("Deleting information and cleaning domain tree.");
       end if;
       Var_Default_Domain:=To_Unbounded_String(Constant_Default_Domain);
       Var_Language:=Nul;

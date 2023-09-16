@@ -3,11 +3,10 @@ with Adaintl;
 use Adaintl;
 
 
-
 with Ada.Text_Io;
 use Ada.Text_Io;
 
-procedure Prueba is 
+procedure Ejemplo is 
 
    C : Character;  
 
@@ -36,7 +35,6 @@ begin
    Put_Line("Paises"-"* España");   -- Dominio (explicito): "Paises"
    Put_Line("Paises"-"* Italia");   -- Dominio (explicito): "Paises"
 
-
    New_Line(2);
    Set_Language(En);
    Put_Line("Ingles:");
@@ -59,4 +57,4 @@ begin
 
    Get_Immediate(C);
 
-end Prueba;
+end Ejemplo;
