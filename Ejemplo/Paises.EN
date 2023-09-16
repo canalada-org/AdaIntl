@@ -1,0 +1,13 @@
+# Internationalization File Created with AdaIntl v0.1alpha
+# AdaIntl v0.1alpha is an internationalizing tool for Ada95 programs created by Andres_age
+# More info at www.canalada.org
+
+# File: 'Paises.EN'
+# Language: 'EN'
+
+# "* España"
+80376497="* Spain"
+
+# "* Italia"
+84574257="* Italy"
+

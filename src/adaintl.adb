@@ -1,5 +1,7 @@
-with D_Frases_Io,D_Hash, D_Arbol_Frases,Ada.Strings.Unbounded,D_Arbol_Dominios, D_Archivo_Conf;
-use D_Frases_Io,D_Hash, D_Arbol_Frases,Ada.Strings.Unbounded,D_Arbol_Dominios, D_Archivo_Conf;
+with D_Frases_Io,D_Hash, D_Arbol_Frases,Ada.Strings.Unbounded,
+   D_Arbol_Dominios, D_Archivo_Conf;
+use D_Frases_Io,D_Hash, D_Arbol_Frases,Ada.Strings.Unbounded,
+   D_Arbol_Dominios, D_Archivo_Conf;
 
 with Ada.Text_Io;
 use Ada.Text_Io;
@@ -15,12 +17,26 @@ package body Adaintl is
    Domain_Tree             :          Ad_Arbol;  
    Primera_Ejecucion       :          Boolean          := True;  
 
-   No_Execution : exception; -- If AdaIntl mode is set to "Deactivated", nothing is executed                                                                     
+   No_Execution : exception; -- If AdaIntl mode is set to "Deactivated", nothing is executed                                                                           
 
-   ----------------
-   -- Initialize --
-   ----------------
-   function Initialize (
+
+   -------------------------
+   -- Initialize_Adaintl  --
+   -------------------------
+   procedure Initialize_Adaintl (
+         Language                : Language_Type;                  
+         Default_Domain          : String           := "Language"; 
+         Debug_Mode              : Debug_Level_Type := No_Debug;   
+         Directory               : String           := "";         
+         Load_Configuration_File : String           := ""          ) is 
+      I_Temp : Internationalization_Type;  
+   begin
+      I_Temp:=Initialize_Adaintl (Language, Default_Domain,Debug_Mode,
+         Directory, Load_Configuration_File);
+   end Initialize_Adaintl ;
+
+
+   function Initialize_Adaintl (
          Language                : Language_Type;                  
          Default_Domain          : String           := "Language"; 
          Debug_Mode              : Debug_Level_Type := No_Debug;   
@@ -71,10 +87,12 @@ package body Adaintl is
          declare
             Datos_Configuracion : T_Datos_Configuracion := (D_Idiomas.Nul, To_Unbounded_String (""));  
          begin
-            if not Existe_Fichero_Configuración(Load_Configuration_File, T_Debug_Level(Debug_Mode)) then
+            if not Existe_Fichero_Configuración(Load_Configuration_File,
+                  T_Debug_Level(Debug_Mode)) then
                -- Guardamos
                Datos_Configuracion.Idioma:=T_Language(Language);
-               Datos_Configuracion.Nombre_Idioma:=To_Unbounded_String(Language_Name(Language));
+               Datos_Configuracion.Nombre_Idioma:=To_Unbounded_String(
+                  Language_Name(Language));
                Escribir_Configuración (
                   Load_Configuration_File,
                   Datos_Configuracion,
@@ -89,7 +107,8 @@ package body Adaintl is
                   Var_Language:=Language_Type(Datos_Configuracion.Idioma);
                exception
                   when Fichero_Configuracion_Incorrecto=>
-                     if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=Total_Stop then
+                     if Var_Debug_Level=Only_Errors_Stop or
+                           Var_Debug_Level=Total_Stop then
                         raise Conf_File_Not_Correct;
                      end if;
                end;
@@ -105,21 +124,61 @@ package body Adaintl is
          Primera_Ejecucion:=False;
       end if;
 
+
+      -------
+
       Dominio_Temp:=Nuevo_Dominio(Default_Domain,T_Language(Language));
 
       if Debug_Mode=Total_No_Stop or Debug_Mode=Total_Stop then
-         Put_Line("Cargando frases de dominio '" & Default_Domain & "' en " & Language_Type'Image(Language));
+         Put_Line("Cargando frases de dominio '" & Default_Domain &
+            "' en " & Language_Type'Image(Language));
 
       end if;
       -- Cargamos las frases y las insertamos en el arbol de dominios
-      Cargar_Frases(D_Arbol_Dominios.Arbol_Frases(Dominio_Temp).all,Default_Domain,T_Language(Language),T_Debug_Level(Debug_Mode));
-      Insertar(Dominio_Temp,Domain_Tree);
+      Cargar_Frases(D_Arbol_Dominios.Arbol_Frases(Dominio_Temp).all,
+         Default_Domain,T_Language(Language),T_Debug_Level(Debug_Mode));
+      begin
+         Insertar(Dominio_Temp,Domain_Tree);
+      exception
+         when Dominio_Existente=> Finalizar(Dominio_temp.Arbol_Frase.all);
+      end;
+
 
       return True;
    exception
       when No_Execution=>
          return False;
-   end Initialize;
+   end Initialize_Adaintl ;
+
+
+   ------------------------
+   -- Get_Default_Domain --
+   ------------------------
+
+   function Get_Default_Domain return String is 
+   begin
+      return To_String(Var_Default_Domain);
+   end Get_Default_Domain;
+
+
+   --------------------
+   -- Get_Debug_Mode --
+   --------------------
+
+   function Get_Debug_Mode return Debug_Level_Type is 
+   begin
+      return Var_Debug_Level;
+   end Get_Debug_Mode;
+
+
+   ------------------
+   -- Get_Language --
+   ------------------
+
+   function Get_Language return Language_Type is 
+   begin
+      return Var_Language;
+   end Get_Language;
 
 
    --------------------
@@ -154,12 +213,14 @@ package body Adaintl is
       -- este dominio en el arbol de dominios
       procedure Cargar_Frases_En_Arbol is 
       begin
-         Cargar_Frases(D_Arbol_Dominios.Arbol_Frases(Dominio_Temp).all,Domain,T_Language(Var_Language),T_Debug_Level(Var_Debug_Level));
+         Cargar_Frases(D_Arbol_Dominios.Arbol_Frases(Dominio_Temp).all,
+            Domain,T_Language(Var_Language),T_Debug_Level(Var_Debug_Level));
          Insertar(Dominio_Temp,Domain_Tree);
       exception
          when Fichero_Incorrecto=>
             -- El fichero es incorrecto!
-            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=Total_Stop then
+            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
+                  Total_Stop then
                raise File_Not_Correct;
             end if;
       end Cargar_Frases_En_Arbol;
@@ -206,7 +267,8 @@ package body Adaintl is
             raise No_Execution;
          else
             Put_Line("Error: Lenguaje no valido (nul).");
-            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=Total_Stop then
+            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
+                  Total_Stop then
                raise Language_Not_Valid;
             else -- No stop
                raise No_Execution;
@@ -240,11 +302,11 @@ package body Adaintl is
    ---------
 
    function "-" (
-         Domain : String; 
-         Phrase : String  ) 
+         Left  : String; 
+         Right : String  ) 
      return String is 
       F_Temp : T_Frase;  
-      H      : T_Hash        := Hash (Phrase);  
+      H      : T_Hash        := Hash (Right);  
       A      : Puntero_Arbol;  
       D      : T_Dominio;  
 
@@ -258,18 +320,20 @@ package body Adaintl is
             Put_Line("Frase no encontrada en fichero de traduccion.");
          end if;
          begin
-            Escribir_Frase(Phrase,H, Domain, T_Language(Var_Language),T_Debug_Level(Var_Debug_Level));
+            Escribir_Frase(Right,H, Left, T_Language(Var_Language),
+               T_Debug_Level(Var_Debug_Level));
          exception
             -- El fichero no es correcto o no se puede crear 
             when Fichero_Incorrecto=>
                Insertar_En_Arbol:=False;
-               if Var_Debug_Level=Total_Stop or Var_Debug_Level=Only_Errors_Stop then
+               if Var_Debug_Level=Total_Stop or Var_Debug_Level=
+                     Only_Errors_Stop then
                   raise File_Not_Correct;
                end if;
          end;
          -- Si falla la escritura en fichero, no escribimos en el arbol
          if Insertar_En_Arbol then
-            Insertar(Nueva_Frase(Phrase),A.All);
+            Insertar(Nueva_Frase(Right),A.All);
          end if;
       end Escribir_Frase_Y_Añadir_Al_Arbol;
 
@@ -279,13 +343,15 @@ package body Adaintl is
       -- Devuelve falso si el fichero de traducción es incorrecto (no existe, tiene fallos, etc)
       function Cargar_Frases_En_Arbol return Boolean is 
       begin
-         Cargar_Frases(D_Arbol_Dominios.Arbol_Frases(D).all,Domain,T_Language(Var_Language),T_Debug_Level(Var_Debug_Level));
+         Cargar_Frases(D_Arbol_Dominios.Arbol_Frases(D).all,Left,
+            T_Language(Var_Language),T_Debug_Level(Var_Debug_Level));
          Insertar(D,Domain_Tree);
          return True;
       exception
          when Fichero_Incorrecto=>
             -- El fichero es incorrecto!
-            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=Total_Stop then
+            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
+                  Total_Stop then
                raise File_Not_Correct;
             else
                return False;
@@ -313,7 +379,8 @@ package body Adaintl is
             raise No_Execution;
          else
             Put_Line("Error: No se ha inicializado AdaIntl.");
-            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=Total_Stop then
+            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
+                  Total_Stop then
                raise Not_Initialized;
             else -- No stop
                raise No_Execution;
@@ -328,7 +395,8 @@ package body Adaintl is
             raise No_Execution;
          else
             Put_Line("Error: Lenguaje no valido (nul).");
-            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=Total_Stop then
+            if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
+                  Total_Stop then
                raise Language_Not_Valid;
             else -- No stop
                raise No_Execution;
@@ -343,35 +411,37 @@ package body Adaintl is
 
       -- Comprobamos que el dominio está cargado
       if Var_Debug_Level=Total_No_Stop or Var_Debug_Level=Total_Stop then
-         Put_Line("Comprobando que este cargado el dominio '" & Domain & "'");
+         Put_Line("Comprobando que este cargado el dominio '" & Left & "'");
       end if;
 
 
       begin
-         D:=D_Arbol_Dominios.Recuperar (D_Arbol_Dominios.Buscar (Domain, Domain_Tree));
+         D:=D_Arbol_Dominios.Recuperar (D_Arbol_Dominios.Buscar (Left,
+               Domain_Tree));
       exception
          -- Si no está cargado...
          when Dominio_No_Existente =>
-            D:=Nuevo_Dominio(Domain,T_Language(Var_Language));
+            D:=Nuevo_Dominio(Left,T_Language(Var_Language));
             -- Cargamos las frases y las insertamos en el arbol de dominios
             if not Cargar_Frases_En_Arbol then
-               return Phrase;
+               return Right;
             end if;
       end;
 
       -- Comprobamos que el dominio cargado sea correcto y el idioma coincida
       if Idioma(D)/=T_Language(Var_Language) then
          if Var_Debug_Level=Total_No_Stop or Var_Debug_Level=Total_Stop then
-            Put_Line("Encontrado en memoria dominio '" & Domain & "' en " & T_Language'Image(Idioma(D)));
+            Put_Line("Encontrado en memoria dominio '" & Left & "' en " &
+               T_Language'Image(Idioma(D)));
          end if;
          -- Si no coincide debemos quitar de memoria el dominio y cargar el correcto
          Borrar(D,Domain_Tree);
-         D:=Nuevo_Dominio(Domain,T_Language(Var_Language));
+         D:=Nuevo_Dominio(Left,T_Language(Var_Language));
          -- Cargamos las frases y las insertamos en el arbol de dominios
          begin
             Cargar_Frases(
                D_Arbol_Dominios.Arbol_Frases(D).all,
-               Domain,
+               Left,
                T_Language(Var_Language),
                T_Debug_Level(Var_Debug_Level)
                );
@@ -379,10 +449,11 @@ package body Adaintl is
          exception
             when Fichero_Incorrecto=>
                -- El fichero es incorrecto!
-               if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=Total_Stop then
+               if Var_Debug_Level=Only_Errors_Stop or Var_Debug_Level=
+                     Total_Stop then
                   raise File_Not_Correct;
                else
-                  return Phrase;
+                  return Right;
                end if;
          end;
       end if;
@@ -407,10 +478,10 @@ package body Adaintl is
       -- Si el hash no existe, escribimos en fichero y añadimos al arbol de frases del dominio
       when Hash_No_Existente =>
          Escribir_Frase_Y_Añadir_Al_Arbol;
-         return Phrase;
+         return Right;
 
       when No_Execution=>
-         return Phrase;
+         return Right;
    end "-";
 
 
@@ -452,7 +523,8 @@ package body Adaintl is
          if I=Nul then
             Languages_Available(I):=False;
          else
-            Languages_Available(I):=Existe_Fichero(To_String(Var_Default_Domain), T_Language(I), No_Debug);
+            Languages_Available(I):=Existe_Fichero(To_String(
+                  Var_Default_Domain), T_Language(I), No_Debug);
          end if;
       end loop;
       return Languages_Available;

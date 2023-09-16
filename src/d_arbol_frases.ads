@@ -38,10 +38,7 @@ package D_Arbol_Frases is
    package Arbol_Frases is new Aa_Tree_Package (T_Frase,Menorque,Imprimir);
    use Arbol_Frases;
 
-   type Af_Arbol is new Arbol_Frases.Aa_Tree with 
-      record 
-   null; 
-   end record;
+   type Af_Arbol is new Arbol_Frases.Aa_Tree; 
    type Af_Ptr is new Arbol_Frases.Tree_Ptr; 
 
 
@@ -115,8 +112,8 @@ package D_Arbol_Frases is
    ---    EXCEPCIONES        ---
    -----------------------------
 
-   Hash_Existente: exception;
-      Hash_No_Existente: exception;
+   Hash_Existente    : exception;  
+   Hash_No_Existente : exception;  
 
 
 

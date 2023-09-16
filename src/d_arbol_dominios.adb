@@ -138,8 +138,9 @@ package body D_Arbol_Dominios is
             T.Cursor:=T.Cursor+1;
          end if;
       end if;
-      -- Si no caben mas dominios, los que no quepan serán destruidos automáticamente (son limited_controlled)
-   end Insertar;
+      -- Corregir: Si no quedan más dominios, al limpiar el arbol puede que queden
+      -- restos en la memoria!!!!
+         end Insertar;
 
    procedure Vaciar (
          T : in out Ad_Arbol ) is 

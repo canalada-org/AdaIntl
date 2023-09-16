@@ -21,48 +21,69 @@
 --     Print_Tree          print AA tree in sorted order
 --     Retrieve *          returns item in Tree_Ptr passed as parameter
 
-with Ada.Finalization;
+--with Ada.Finalization;
 --with Text_IO; use Text_IO;
 
 generic
-    type Element_Type is private;
-    with function "<" ( Left, Right: Element_Type ) return Boolean;
-    with procedure Put( Element: Element_Type );
-package AA_Tree_Package is
-    type Tree_Ptr is private;
-    type AA_Tree is new Ada.Finalization.Limited_Controlled with private;
+   type Element_Type is private; 
+   with function "<" (
+         Left,                
+         Right : Element_Type ) 
+     return Boolean; 
+   with procedure Put (
+         Element : Element_Type ); 
+package Aa_Tree_Package is
+   type Tree_Ptr is private; 
+   type Aa_Tree is private; 
 
-    procedure Initialize( T: in out AA_Tree );
-    procedure Finalize( T: in out AA_Tree );
+   procedure Initialize (
+         T : in out Aa_Tree ); 
+   procedure Finalize (
+         T : in out Aa_Tree ); 
 
-    procedure Delete( X: Element_Type; T: in out AA_Tree );
-    function  Find( X: Element_Type; T: AA_Tree ) return Tree_Ptr;
-    function  Find_Min( T: AA_Tree ) return Tree_Ptr;
-    function  Find_Max( T: AA_Tree ) return Tree_Ptr;
-    procedure Insert( X: Element_Type; T: in out AA_Tree );
-    procedure Make_Empty( T: in out AA_Tree );
-    procedure Print_Tree( T: AA_Tree );
-    function  Retrieve( P: Tree_Ptr ) return Element_Type;
+   procedure Delete (
+         X :        Element_Type; 
+         T : in out Aa_Tree       ); 
+   function Find (
+         X : Element_Type; 
+         T : Aa_Tree       ) 
+     return Tree_Ptr; 
+   function Find_Min (
+         T : Aa_Tree ) 
+     return Tree_Ptr; 
+   function Find_Max (
+         T : Aa_Tree ) 
+     return Tree_Ptr; 
+   procedure Insert (
+         X :        Element_Type; 
+         T : in out Aa_Tree       ); 
+   procedure Make_Empty (
+         T : in out Aa_Tree ); 
+   procedure Print_Tree (
+         T : Aa_Tree ); 
+   function Retrieve (
+         P : Tree_Ptr ) 
+     return Element_Type; 
 
-    Item_Not_Found : exception;
-    Item_Exists: exception;    
+   Item_Not_Found : exception;
+   Item_Exists: exception;
 
 private
-    type Tree_Node;
-    type Tree_Ptr is access Tree_Node;
+   type Tree_Node; 
+   type Tree_Ptr is access Tree_Node; 
 
-    type AA_Tree is new Ada.Finalization.Limited_Controlled with
-      record
-        Root : Tree_Ptr;
-        Null_Node : Tree_Ptr;
-      end record;
+   type Aa_Tree is 
+      record 
+         Root      : Tree_Ptr;  
+         Null_Node : Tree_Ptr;  
+      end record; 
 
-    type Tree_Node is
-      record
-        Element : Element_Type;
-        Left    : Tree_Ptr;
-        Right   : Tree_Ptr;
-        Level   : Integer;
-      end record;
+   type Tree_Node is 
+      record 
+         Element : Element_Type;  
+         Left    : Tree_Ptr;  
+         Right   : Tree_Ptr;  
+         Level   : Integer;  
+      end record; 
 
-end AA_Tree_Package;
+end Aa_Tree_Package;
